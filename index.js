@@ -83,6 +83,24 @@ app.get("/1inch/approve/transaction", async (req, res) => {
   }
 });
 
+app.get("/1inch/swap", async (req, res) => {
+  const config = {
+    headers: {
+      "Authorization": `Bearer ${process.env.API_KEY_1INCH}`
+    }
+  };
+  const { fromTokenAddress, toTokenAddress, amount, fromAddress, slippage } = req.query;
+
+  try {
+    const url = `https://api.1inch.dev/swap/v5.2/1/swap?fromTokenAddress=${fromTokenAddress}&toTokenAddress=${toTokenAddress}&amount=${amount}&fromAddress=${fromAddress}&slippage=${slippage}`;
+    const response = await axios.get(url, config);
+    res.json(response.data);
+  } catch (error) {
+    console.error("Error in 1inch swap request:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});
+
 Moralis.start({
   apiKey: process.env.MORALIS_KEY,
 }).then(() => {
